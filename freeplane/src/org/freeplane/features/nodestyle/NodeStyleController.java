@@ -367,7 +367,7 @@ public class NodeStyleController implements IExtension {
 				continue;
 			}
 			final TextAlign textAlign = styleModel.getTextAlign();
-			if (textAlign == null) {
+			if (textAlign == TextAlign.DEFAULT) {
 				continue;
 			}
 			return textAlign;

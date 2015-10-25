@@ -137,8 +137,8 @@ public class MNodeStyleController extends NodeStyleController {
 			if (null != whichStyle.getNodeNumbering()) {
 				fromStyle.setNodeNumbering(null);
 			}
-			if (null != whichStyle.getTextAlign()) {
-				fromStyle.setTextAlign(null);
+			if (TextAlign.DEFAULT != whichStyle.getTextAlign()) {
+				fromStyle.setTextAlign(TextAlign.DEFAULT);
 			}
        }
 

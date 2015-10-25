@@ -52,12 +52,12 @@ class TextAlignAction extends AMultipleNodeAction {
 
 	@Override
 	protected void actionPerformed(final ActionEvent e, final NodeModel selected) {
-		((MNodeStyleController) NodeStyleController.getController()).setTextAlign(selected, textAlignSet ? textAlign : null);
+		((MNodeStyleController) NodeStyleController.getController()).setTextAlign(selected, textAlignSet ? textAlign : TextAlign.DEFAULT);
 	}
 
 	boolean isTextAlignSet() {
 		final NodeModel node = Controller.getCurrentModeController().getMapController().getSelectedNode();
-		return textAlign.equals(NodeStyleController.getController().getTextAlign(node));
+		return NodeStyleController.getController().getTextAlign(node).equals(textAlign);
 	}
 
 	@Override

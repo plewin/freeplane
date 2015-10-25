@@ -254,7 +254,7 @@ class NodeStyleBuilder implements IElementDOMHandler, IExtensionElementWriter, I
 			writer.addAttribute("FORMAT", format);
 		}
 		final TextAlign textAlign = forceFormatting ? nsc.getTextAlign(node) : style.getTextAlign();
-		if (textAlign != null) {
+		if (textAlign != TextAlign.DEFAULT) {
 			writer.addAttribute("TEXT_ALIGN", textAlign.toString());
 		}
 	}
