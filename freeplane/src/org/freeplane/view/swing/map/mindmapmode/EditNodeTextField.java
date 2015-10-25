@@ -24,7 +24,6 @@ import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.Font;
-import java.awt.Insets;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.Toolkit;
@@ -102,7 +101,6 @@ import org.freeplane.view.swing.map.MapView;
 import org.freeplane.view.swing.map.NodeView;
 import org.freeplane.view.swing.map.ZoomableLabel;
 import org.freeplane.view.swing.map.ZoomableLabelUI;
-import org.freeplane.view.swing.map.ZoomableLabelUI.LayoutData;
 
 import com.lightdev.app.shtm.SHTMLWriter;
 
@@ -558,8 +556,8 @@ public class EditNodeTextField extends EditNodeBase {
 	private final ForegroundAction blackAction;
 	private StyledTextAction defaultColorAction;
 	private StyledTextAction removeFormattingAction;
-	private int verticalSpace;
 	private int horizontalSpace;
+	private int verticalSpace;
 	private MapViewChangeListener mapViewChangeListener;
 
 	@Override
@@ -684,73 +682,52 @@ public class EditNodeTextField extends EditNodeBase {
 		assert( parent.isValid());
 		final int nodeWidth = parent.getWidth();
 		final int nodeHeight = parent.getHeight();
-		final int textFieldBorderWidth = 2;
-		textfield.setBorder(new MatteBorder(textFieldBorderWidth, textFieldBorderWidth, textFieldBorderWidth, textFieldBorderWidth, nodeView.getSelectedColor()));
-		final Dimension textFieldMinimumSize = textfield.getPreferredSize();
-		textFieldMinimumSize.width += 1;
-        if(textFieldMinimumSize.width < extraWidth)
-            textFieldMinimumSize.width = extraWidth;
-        if(textFieldMinimumSize.width < 10)
-            textFieldMinimumSize.width = 10;
-		if (textFieldMinimumSize.width > maxWidth) {
-			textFieldMinimumSize.width = maxWidth;
+		final Dimension textFieldSize;
+		textfield.setBorder(new MatteBorder(2, 2, 2, 2, nodeView.getSelectedColor()));
+		textFieldSize = textfield.getPreferredSize();
+		textFieldSize.width += 1;
+        if(textFieldSize.width < extraWidth)
+            textFieldSize.width = extraWidth;
+        if(textFieldSize.width < 10)
+            textFieldSize.width = 10;
+		if (textFieldSize.width > maxWidth) {
+			textFieldSize.width = maxWidth;
 			setLineWrap();
-			textFieldMinimumSize.height = textfield.getPreferredSize().height;
+			textFieldSize.height = textfield.getPreferredSize().height;
 		}
-		final ZoomableLabelUI parentUI = (ZoomableLabelUI)parent.getUI();
-		final LayoutData layoutData = parentUI.getLayoutData(parent);
-		Rectangle iconR = layoutData.iconR;
-		final Rectangle textR = layoutData.textR;
-		final Insets parentInsets = parent.getInsets();
-		int textFieldX = parentInsets.left - textFieldBorderWidth + (iconR.width > 0 ? textR.x - iconR.x : 0);
-		
-		
-		final EventBuffer eventQueue = MTextController.getController().getEventQueue();
-		KeyEvent firstEvent = eventQueue.getFirstEvent();
-		
-		Point mouseEventPoint = null;
-		if (firstEvent == null) {
-			MouseEvent currentEvent = eventQueue.getMouseEvent();
-			if(currentEvent != null){
-				MouseEvent mouseEvent = (MouseEvent) currentEvent;
-				if(mouseEvent.getComponent().equals(parent)){
-					mouseEventPoint = mouseEvent.getPoint();
-					mouseEventPoint.x -= textR.x;
-					mouseEventPoint.y -= textR.y;
-				}
-			}
-		}
+		final Rectangle textR = ((ZoomableLabelUI)parent.getUI()).getTextR(parent);
+		final int widthAddedToTextField = Math.max(textFieldSize.width - textR.width, 0);
+		textFieldSize.width = Math.max(textFieldSize.width, textR.width);
+		textFieldSize.height = Math.max(textFieldSize.height, textR.height);
+		textfield.setSize(textFieldSize.width, textFieldSize.height);
+		horizontalSpace = Math.max(nodeWidth - textFieldSize.width, textR.x);
+		verticalSpace = Math.max(nodeHeight - textFieldSize.height, textR.y);
+		final Dimension newParentSize = new Dimension(horizontalSpace + textFieldSize.width, verticalSpace + textFieldSize.height);
 
+		final Point location = new Point(textR.x - 2, textR.y);
 		
-		textFieldMinimumSize.width = Math.max(textFieldMinimumSize.width, nodeWidth - textFieldX - (parentInsets.right - textFieldBorderWidth));
-		textFieldMinimumSize.height = Math.max(textFieldMinimumSize.height, textR.height);
-		textfield.setSize(textFieldMinimumSize.width, textFieldMinimumSize.height);
-		final Dimension newParentSize = new Dimension(textFieldX + textFieldMinimumSize.width + parentInsets.right, verticalSpace + textFieldMinimumSize.height);
-		horizontalSpace = newParentSize.width - textFieldMinimumSize.width;
-		verticalSpace = Math.max(nodeHeight - textFieldMinimumSize.height, textR.y);
-		final int widthAddedToParent = newParentSize.width - parent.getWidth();
-		final Point location = new Point(textR.x - textFieldBorderWidth, textR.y);
-		
-		final int widthAddedToTextField = textFieldMinimumSize.width - (textR.width + 2 * textFieldBorderWidth);
+		final int alignmentCorrection;
 		if(widthAddedToTextField > 0){
 			switch(labelHorizontalAlignment){
 			case SwingConstants.CENTER:
-				location.x -= (widthAddedToTextField - widthAddedToParent) / 2;
-				if(mouseEventPoint != null)
-					mouseEventPoint.x += widthAddedToTextField / 2;
+				alignmentCorrection= widthAddedToTextField / 2;
 				break;
 			case SwingConstants.RIGHT:
-				location.x -= widthAddedToTextField - widthAddedToParent;
-				if(mouseEventPoint != null)
-					mouseEventPoint.x += widthAddedToTextField;
+				alignmentCorrection= widthAddedToTextField;
+				break;
+			default:
+				alignmentCorrection= 0;
 				break;
 			}
+			location.x -= alignmentCorrection;
 		}
+		else
+			alignmentCorrection = 0;
 		
 		if(! layoutMapOnTextChange)
 			UITools.convertPointToAncestor(parent, location, mapView);
 		
-		textfield.setBounds(location.x, location.y, textFieldMinimumSize.width, textFieldMinimumSize.height);
+		textfield.setBounds(location.x, location.y, textFieldSize.width, textFieldSize.height);
 		parent.setPreferredSize(newParentSize);
 		parent.setText("");
         parent.setHorizontalAlignment(JLabel.LEFT);
@@ -758,12 +735,21 @@ public class EditNodeTextField extends EditNodeBase {
 			parent.add(textfield, 0);
 		else
 			mapView.add(textfield, 0);
-		
+		final EventBuffer eventQueue = MTextController.getController().getEventQueue();
+		KeyEvent firstEvent = eventQueue.getFirstEvent();
 		redispatchKeyEvents(textfield, firstEvent);
 		if (firstEvent == null) {
+			MouseEvent currentEvent = eventQueue.getMouseEvent();
 			int pos = document.getLength();
-			if(mouseEventPoint != null)
-				pos = textfield.viewToModel(mouseEventPoint);
+			if(currentEvent != null){
+				MouseEvent mouseEvent = (MouseEvent) currentEvent;
+				if(mouseEvent.getComponent().equals(parent)){
+					final Point point = mouseEvent.getPoint();
+					point.x -= textR.x - alignmentCorrection;
+					point.y -= textR.y;
+					pos = textfield.viewToModel(point);
+				}
+			}
 			textfield.setCaretPosition(pos);
 		}
 		document.addDocumentListener(documentListener);

@@ -51,18 +51,6 @@ public class ZoomableLabelUI extends BasicLabelUI {
 	private Rectangle iconR = new Rectangle();
 	private Rectangle textR = new Rectangle();
 	private Rectangle viewR = new Rectangle();
-	private LayoutData layoutData = new LayoutData(iconR, textR);
-	
-	public static class LayoutData{
-		final public Rectangle iconR;
-		final public Rectangle textR;
-		public LayoutData(Rectangle iconR, Rectangle textR) {
-			super();
-			this.iconR = iconR;
-			this.textR = textR;
-		}
-		
-	}
 
 	private int maximumWidth = Integer.MAX_VALUE;
 
@@ -444,12 +432,7 @@ public class ZoomableLabelUI extends BasicLabelUI {
 		layout(label);
     	return textR;
     }
-	
-	public LayoutData getLayoutData(ZoomableLabel label) {
-		layout(label);
-    	return layoutData;
-    }
-	
+
 	private void layout(ZoomableLabel label) {
 		String text = label.getText();
 		if(text == null || text.equals(""))
