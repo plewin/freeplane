@@ -99,7 +99,9 @@ public class NodeTooltip extends JToolTip {
 		});
 		UITools.setScrollbarIncrement(scrollPane);
 		add(scrollPane);
-		tip.setOpaque(true);
+		tip.setOpaque(false);
+//		scrollPane.setOpaque(false);
+//		scrollPane.getViewport().setOpaque(false);
 	}
 	
 	private static int maximumWidth = Integer.MAX_VALUE;
