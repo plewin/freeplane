@@ -103,10 +103,11 @@ class BubbleMainView extends MainView {
     static {
     	insets = new Insets(0, 0, 0, 0);
     	updateInsets();
-    	bubbles = new WeakHashMap<BubbleMainView, Object>();
+    	bubbles = new WeakHashMap<>();
     	ResourceController resourceController = ResourceController.getResourceController();
 		resourceController.addPropertyChangeListener(new IFreeplanePropertyListener() {
 			
+			@Override
 			public void propertyChanged(String propertyName, String newValue, String oldValue) {
 				if(propertyName.equals(VERTICAL_MARGIN_KEY)) {
 					updateInsets();
