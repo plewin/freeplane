@@ -20,9 +20,6 @@
 package org.freeplane.features.nodestyle;
 
 import org.freeplane.core.extension.IExtension;
-import org.freeplane.core.ui.components.UITools;
-import org.freeplane.core.util.Convertible;
-import org.freeplane.core.util.Quantity;
 import org.freeplane.features.map.NodeModel;
 
 /**
@@ -30,32 +27,6 @@ import org.freeplane.features.map.NodeModel;
  * Nov 13, 2011
  */
 public class NodeSizeModel implements IExtension {
-	
-	enum LengthUnits implements Convertible{
-/*
- * px      | Pixels      | Varies        | No          | No                 | 
-+---------+-------------+---------------+-------------+--------------------+
-| in      | Inches      | 1             | Yes         | Yes                | 
-+---------+-------------+---------------+-------------+--------------------+
-| mm      | Millimeters | 25.4          | Yes         | Yes                | 
-+---------+-------------+---------------+-------------+--------------------+
-| pt      | Points      | 72      
-		
- */
-		px(1d / UITools.getScreenResolution()), in(1), mm(1d / 25.4), cm(1d / 2.54);
-		
-		LengthUnits(double factor){
-			this.factor = factor * UITools.getScreenResolution();
-			
-		}
-		final private double factor;
-		@Override
-		public double factor() {
-			return factor;
-		}
-		
-	}
-	
 	public static final int NOT_SET = -1;
 
 	public static NodeSizeModel getModel(final NodeModel node) {
@@ -71,30 +42,21 @@ public class NodeSizeModel implements IExtension {
 		return styleModel;
 	}
 
-	private Quantity<LengthUnits> minNodeWidth = null;
-	private Quantity<LengthUnits> maxTextWidth = null;
+	private int minNodeWidth = NOT_SET;
+	private int maxTextWidth = NOT_SET;
 	
 	public int getMaxNodeWidth() {
-    	return maxTextWidth != null ?  maxTextWidth.inBaseUnitsRounded() : NOT_SET;
+    	return maxTextWidth;
     }
 	public void setMaxNodeWidth(int maxTextWidth) {
-		setMaxNodeWidth(maxTextWidth != NOT_SET ? new Quantity<NodeSizeModel.LengthUnits>(maxTextWidth, LengthUnits.px) : null);
-    }
-	
-	public void setMaxNodeWidth(Quantity<LengthUnits> maxTextWidth) {
     	this.maxTextWidth = maxTextWidth;
     }
 	public int getMinNodeWidth() {
-    	return minNodeWidth != null ?  minNodeWidth.inBaseUnitsRounded() : NOT_SET;
+    	return minNodeWidth;
     }
-	
 	public void setMinNodeWidth(int minNodeWidth) {
-    	setMinNodeWidth(minNodeWidth != NOT_SET ? new Quantity<NodeSizeModel.LengthUnits>(minNodeWidth, LengthUnits.px) : null);
+    	this.minNodeWidth = minNodeWidth;
     }
-
-	public void setMinNodeWidth(Quantity<LengthUnits> quantity) {
-		this.minNodeWidth = quantity;
-	}
 	
 	public static void setNodeMaxNodeWidth(NodeModel node, int maxTextWidth) {
 		createNodeSizeModel(node).setMaxNodeWidth(maxTextWidth);
@@ -113,9 +75,9 @@ public class NodeSizeModel implements IExtension {
     }
 
 	public void copyTo(NodeSizeModel to) {
-	    if(maxTextWidth != null)
+	    if(maxTextWidth != NOT_SET)
 	    	to.setMaxNodeWidth(maxTextWidth);
-	    if(minNodeWidth != null)
+	    if(minNodeWidth != NOT_SET)
 	    	to.setMinNodeWidth(minNodeWidth);
     }
 }
