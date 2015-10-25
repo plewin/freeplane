@@ -19,15 +19,12 @@
  */
 package org.freeplane.view.swing.ui;
 
-import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-import java.awt.event.FocusEvent;
-import java.awt.event.FocusListener;
+import javax.swing.SwingUtilities;
 
 import org.freeplane.features.mode.Controller;
-import org.freeplane.features.ui.IMapViewManager;
 
 class MapsMenuActionListener implements ActionListener {
 // // 	final private Controller controller;
@@ -36,25 +33,11 @@ class MapsMenuActionListener implements ActionListener {
 //		this.controller = controller;
 	}
 
-	public void actionPerformed(final ActionEvent menuEvent) {
-		final String mapId = menuEvent.getActionCommand();
-				final IMapViewManager mapViewManager = Controller.getCurrentController().getMapViewManager();
-				final Component selectedComponent = mapViewManager.getSelectedComponent();
-				if(selectedComponent != null && ! selectedComponent.hasFocus()){
-					selectedComponent.addFocusListener(new  FocusListener() {
-						
-						public void focusLost(FocusEvent e) {
-						}
-						
-						public void focusGained(FocusEvent e) {
-							selectedComponent.removeFocusListener(this);
-							mapViewManager.changeToMapView(mapId);
-						}
-					});
-					selectedComponent.requestFocusInWindow();
-				}
-				else
-					mapViewManager.changeToMapView(mapId);
+	public void actionPerformed(final ActionEvent e) {
+		SwingUtilities.invokeLater(new Runnable() {
+			public void run() {
+				Controller.getCurrentController().getMapViewManager().changeToMapView(e.getActionCommand());
 			}
-
+		});
+	}
 }
