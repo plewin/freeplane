@@ -64,7 +64,6 @@ import org.freeplane.features.map.NodeModel.NodeChangeType;
 import org.freeplane.features.map.SummaryNode;
 import org.freeplane.features.mode.Controller;
 import org.freeplane.features.mode.ModeController;
-import org.freeplane.features.nodelocation.LocationController;
 import org.freeplane.features.nodelocation.LocationModel;
 import org.freeplane.features.nodestyle.NodeStyleController;
 import org.freeplane.features.nodestyle.NodeStyleModel;
@@ -716,8 +715,7 @@ public class NodeView extends JComponent implements INodeView {
 	 * @return Returns the VGAP.
 	 */
 	public int getVGap() {
-		final int minimalDistanceBetweenChildren = map.getModeController().getExtension(LocationController.class).getMinimalDistanceBetweenChildren(model);
-		return map.getZoomed(minimalDistanceBetweenChildren);
+		return map.getZoomed(LocationModel.getModel(model).getVGap());
 	}
 
 	public NodeView getVisibleParentView() {
