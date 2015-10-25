@@ -175,8 +175,8 @@ public class MNodeMotionListener extends DefaultNodeMouseMotionListener implemen
 				nodeSelector.stopTimerForDelayedSelection();
 				final NodeView nodeV = getNodeView(e);
 				final Point point = e.getPoint();
-				UITools.convertPointToAncestor(nodeV, point, JScrollPane.class);
 				findGridPoint(point);
+				UITools.convertPointToAncestor(nodeV, point, JScrollPane.class);
 				final NodeModel node = nodeV.getModel();
 				dragStartingPoint = point;
 				originalAssignedParentVGap = LocationModel.getModel(node.getParentNode()).getVGap();
@@ -198,12 +198,11 @@ public class MNodeMotionListener extends DefaultNodeMouseMotionListener implemen
 			final NodeView nodeV = getNodeView(e);
 			final MapView mapView = nodeV.getMap();
 			final Point point = e.getPoint();
-			UITools.convertPointToAncestor(nodeV, point, JScrollPane.class);
 			findGridPoint(point);
+			UITools.convertPointToAncestor(nodeV, point, JScrollPane.class);
 			ModeController c = Controller.getCurrentController().getModeController();
 			final Point dragNextPoint = point;
-			boolean shouldMoveSingleNode = !Compat.isCtrlEvent(e);
-			if (shouldMoveSingleNode) {
+			if (!Compat.isCtrlEvent(e)) {
 				final NodeModel node = nodeV.getModel();
 				final LocationModel locationModel = LocationModel.createLocationModel(node);
 				final int hGapChange = getHGapChange(dragNextPoint, node);
@@ -222,14 +221,14 @@ public class MNodeMotionListener extends DefaultNodeMouseMotionListener implemen
 			else {
 				final NodeModel parentNode = nodeV.getVisibleParentView().getModel();
 				final int vGapChange = getVGapChange(dragNextPoint, parentNode);
-				int newVGap = Math.max(0, minimalDistanceBetweenChildren - vGapChange);
-				LocationModel locationModel = LocationModel.createLocationModel(parentNode);
-				if(newVGap == locationModel.getVGap())
+				if(vGapChange != 0){
+					LocationModel.createLocationModel(parentNode).setVGap(Math.max(0, minimalDistanceBetweenChildren - vGapChange));
+					final MapController mapController = c.getMapController();
+					mapController.nodeRefresh(parentNode);
+					mapController.nodeRefresh(nodeV.getModel());
+				}
+				else
 					return;
-				locationModel.setVGap(newVGap);
-				final MapController mapController = c.getMapController();
-				mapController.nodeRefresh(parentNode);
-				mapController.nodeRefresh(nodeV.getModel());
 			}
 			EventQueue.invokeLater(new Runnable() {
 				public void run() {
@@ -373,7 +372,6 @@ public class MNodeMotionListener extends DefaultNodeMouseMotionListener implemen
 	}
 
 	private void resetDragStartingPoint() {
-		dragStartingPoint = null;
 		minimalDistanceBetweenChildren = originalAssignedParentVGap = originalHGap = originalShiftY = 0;
 	}
 
