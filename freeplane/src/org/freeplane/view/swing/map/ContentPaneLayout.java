@@ -33,7 +33,7 @@ class ContentPaneLayout implements LayoutManager {
 					preferredCompSize=  component.getPreferredSize();
 				}
 				
-				if (component instanceof ZoomableLabel) {
+				if (component instanceof MainView) {
 					component.setBounds(0, y, width, preferredCompSize.height);
 				}
 				else {

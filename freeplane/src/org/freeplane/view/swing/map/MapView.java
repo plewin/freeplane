@@ -402,7 +402,6 @@ public class MapView extends JPanel implements Printable, Autoscroll, IMapChange
 	private NodeView nodeToBeCentered;
     private Font noteFont;
     private Font detailFont;
-    private int detailHorizontalAlignment;
     private Color detailForeground;
     private Color detailBackground;
 	private boolean slowScroll;
@@ -1066,7 +1065,6 @@ public class MapView extends JPanel implements Printable, Autoscroll, IMapChange
         detailFont = UITools.scale(style.getFont(detailStyleNode));
         detailBackground = style.getBackgroundColor(detailStyleNode);
         detailForeground = style.getColor(detailStyleNode);
-        detailHorizontalAlignment = style.getTextAlign(detailStyleNode).swingConstant;
     }
 
 	public boolean selectLeft(boolean continious) {
@@ -1857,9 +1855,6 @@ public class MapView extends JPanel implements Printable, Autoscroll, IMapChange
         return detailBackground;
     }
 
-	public int getDetailHorizontalAlignment() {
-		return detailHorizontalAlignment;
-	}
 	private boolean isSelected() {
 	    return Controller.getCurrentController().getMapViewManager().getMapViewComponent() == MapView.this;
     }
@@ -1894,5 +1889,4 @@ public class MapView extends JPanel implements Printable, Autoscroll, IMapChange
 	    	this.anchorContentLocation = getAnchorCenterPoint();
 	    }
     }
-
 }
