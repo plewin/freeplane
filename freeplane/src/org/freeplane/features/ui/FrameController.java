@@ -417,7 +417,7 @@ abstract public class FrameController implements ViewController {
 	public void viewNumberChanged(final int number) {
 	}
 
-	protected void setFullScreen(final boolean fullScreen) {
+	void setFullScreen(final boolean fullScreen) {
 		final Frame frame = getFrame();
 		final Component focusOwner = KeyboardFocusManager.getCurrentKeyboardFocusManager().getFocusOwner();
 		if (fullScreen == isFullScreenEnabled()) {

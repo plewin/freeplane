@@ -134,7 +134,11 @@ class MapViewDockingWindows implements IMapViewChangeListener {
 					final DockingWindowProperties windowProperties = addedWindow.getWindowProperties();
 					windowProperties.setDockEnabled(false);
 					windowProperties.setUndockEnabled(false);
-					setTabAreaVisiblePolicy((TabWindow) addedWindow);
+					final TabAreaProperties tabAreaProperties = ((TabWindow)addedWindow).getTabWindowProperties().getTabbedPanelProperties().getTabAreaProperties();
+	                if (addedToWindow == rootWindow)
+	                    tabAreaProperties.setTabAreaVisiblePolicy(TabAreaVisiblePolicy.MORE_THAN_ONE_TAB);
+                    else
+	                	tabAreaProperties.setTabAreaVisiblePolicy(TabAreaVisiblePolicy.ALWAYS);
                 }
 				setTabPolicies(addedWindow);
             }
@@ -151,8 +155,6 @@ class MapViewDockingWindows implements IMapViewChangeListener {
 					setTabPolicies(window.getChildWindow(i));
 				}
 			}
-
-
 
 			@Override
             public void windowRemoved(DockingWindow removedFromWindow, DockingWindow removedWindow) {
@@ -380,33 +382,4 @@ class MapViewDockingWindows implements IMapViewChangeListener {
             }
 		}
     }
-
-	private void setTabAreaVisiblePolicy(final TabWindow window) {
-		final TabAreaProperties tabAreaProperties = ((TabWindow)window).getTabWindowProperties().getTabbedPanelProperties().getTabAreaProperties();
-		if (window.getWindowParent() == rootWindow)
-		    tabAreaProperties.setTabAreaVisiblePolicy(TabAreaVisiblePolicy.MORE_THAN_ONE_TAB);
-		else
-			tabAreaProperties.setTabAreaVisiblePolicy(TabAreaVisiblePolicy.ALWAYS);
-	}
-
-	private void setTabAreaInvisiblePolicy(TabWindow window) {
-		final TabAreaProperties tabAreaProperties = ((TabWindow)window).getTabWindowProperties().getTabbedPanelProperties().getTabAreaProperties();
-		tabAreaProperties.setTabAreaVisiblePolicy(TabAreaVisiblePolicy.NEVER);
-	}
-
-	public void setTabAreaVisiblePolicy(){
-		for(int i = 0; i < rootWindow.getChildWindowCount(); i++){
-			final DockingWindow window = rootWindow.getChildWindow(i);
-			if(window instanceof TabWindow)
-				setTabAreaVisiblePolicy((TabWindow) window);
-		}
-	}
-
-	public void setTabAreaInvisiblePolicy(){
-		for(int i = 0; i < rootWindow.getChildWindowCount(); i++){
-			final DockingWindow window = rootWindow.getChildWindow(i);
-			if(window instanceof TabWindow)
-				setTabAreaInvisiblePolicy((TabWindow) window);
-		}
-	}
 }
