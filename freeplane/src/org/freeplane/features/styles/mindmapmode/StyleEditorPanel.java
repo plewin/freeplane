@@ -57,13 +57,11 @@ import org.freeplane.core.resources.components.IPropertyControl;
 import org.freeplane.core.resources.components.NextColumnProperty;
 import org.freeplane.core.resources.components.NextLineProperty;
 import org.freeplane.core.resources.components.NumberProperty;
-import org.freeplane.core.resources.components.QuantityProperty;
 import org.freeplane.core.resources.components.SeparatorProperty;
 import org.freeplane.core.ui.AFreeplaneAction;
 import org.freeplane.core.ui.components.UITools;
 import org.freeplane.core.util.ColorUtils;
 import org.freeplane.core.util.HtmlUtils;
-import org.freeplane.core.util.Quantity;
 import org.freeplane.core.util.TextUtils;
 import org.freeplane.features.cloud.CloudController;
 import org.freeplane.features.cloud.CloudModel;
@@ -90,7 +88,6 @@ import org.freeplane.features.map.NodeModel;
 import org.freeplane.features.mode.Controller;
 import org.freeplane.features.mode.ModeController;
 import org.freeplane.features.nodestyle.NodeSizeModel;
-import org.freeplane.features.nodestyle.NodeSizeModel.LengthUnits;
 import org.freeplane.features.nodestyle.NodeStyleController;
 import org.freeplane.features.nodestyle.NodeStyleModel;
 import org.freeplane.features.nodestyle.NodeStyleModel.TextAlign;
@@ -294,7 +291,7 @@ public class StyleEditorPanel extends JPanel {
 		void applyValue(final boolean enabled, final NodeModel node, final PropertyChangeEvent evt) {
 			final MNodeStyleController styleController = (MNodeStyleController) Controller
 			.getCurrentModeController().getExtension(NodeStyleController.class);
-			styleController.setMaxNodeWidth(node, enabled ? mMaxNodeWidth.getQuantifiedValue(): null);
+			styleController.setMaxNodeWidth(node, enabled ? Integer.parseInt(mMaxNodeWidth.getValue()): NodeSizeModel.NOT_SET);
 		}
 	}
 
@@ -307,7 +304,7 @@ public class StyleEditorPanel extends JPanel {
 		void applyValue(final boolean enabled, final NodeModel node, final PropertyChangeEvent evt) {
 			final MNodeStyleController styleController = (MNodeStyleController) Controller
 			.getCurrentModeController().getExtension(NodeStyleController.class);
-			styleController.setMinNodeWidth(node, enabled ? mMinNodeWidth.getQuantifiedValue(): null);
+			styleController.setMinNodeWidth(node, enabled ? Integer.parseInt(mMinNodeWidth.getValue()): NodeSizeModel.NOT_SET);
 		}
 	}
 
@@ -508,8 +505,8 @@ public class StyleEditorPanel extends JPanel {
 	private BooleanProperty mNodeNumbering;
 	private ComboProperty mNodeShape;
 	private EditablePatternComboProperty mNodeFormat;
-	private QuantityProperty<LengthUnits> mMaxNodeWidth;
-	private QuantityProperty<LengthUnits> mMinNodeWidth;
+	private NumberProperty mMaxNodeWidth;
+	private NumberProperty mMinNodeWidth;
 	private ComboProperty mNodeTextAlignment;
 
 	
@@ -663,7 +660,7 @@ public class StyleEditorPanel extends JPanel {
 	private void addMaxNodeWidthControl(final List<IPropertyControl> controls) {
 		mSetMaxNodeWidth = new BooleanProperty(StyleEditorPanel.SET_RESOURCE);
 		controls.add(mSetMaxNodeWidth);
-		mMaxNodeWidth = new QuantityProperty<LengthUnits>(StyleEditorPanel.MAX_TEXT_WIDTH, 0, 100000, 0.1, LengthUnits.class);
+		mMaxNodeWidth = new NumberProperty(StyleEditorPanel.MAX_TEXT_WIDTH, 1, Integer.MAX_VALUE, 1);
 		controls.add(mMaxNodeWidth);
 		final MaxNodeWidthChangeListener listener = new MaxNodeWidthChangeListener(mSetMaxNodeWidth, mMaxNodeWidth);
 		mSetMaxNodeWidth.addPropertyChangeListener(listener);
@@ -674,7 +671,7 @@ public class StyleEditorPanel extends JPanel {
 	private void addMinNodeWidthControl(final List<IPropertyControl> controls) {
 		mSetMinNodeWidth = new BooleanProperty(StyleEditorPanel.SET_RESOURCE);
 		controls.add(mSetMinNodeWidth);
-		mMinNodeWidth = new QuantityProperty<LengthUnits>(StyleEditorPanel.MIN_NODE_WIDTH, 0, 100000, 0.1, LengthUnits.class);
+		mMinNodeWidth = new NumberProperty(StyleEditorPanel.MIN_NODE_WIDTH, 1, Integer.MAX_VALUE, 1);
 		controls.add(mMinNodeWidth);
 		final MinNodeWidthChangeListener listener = new MinNodeWidthChangeListener(mSetMinNodeWidth, mMinNodeWidth);
 		mSetMinNodeWidth.addPropertyChangeListener(listener);
@@ -949,16 +946,16 @@ public class StyleEditorPanel extends JPanel {
 			}
 			final NodeSizeModel nodeSizeModel = NodeSizeModel.getModel(node);
 			{
-				final Quantity<LengthUnits> width = nodeSizeModel != null ? nodeSizeModel.getMaxNodeWidth() : null;
-				final Quantity<LengthUnits> viewWidth = styleController.getMaxWidth(node);
-				mSetMaxNodeWidth.setValue(width != null);
-				mMaxNodeWidth.setQuantifiedValue(viewWidth);
+				final int width = nodeSizeModel != null ? nodeSizeModel.getMaxNodeWidth() : NodeSizeModel.NOT_SET;
+				final int viewWidth = styleController.getMaxWidth(node);
+				mSetMaxNodeWidth.setValue(width != NodeSizeModel.NOT_SET);
+				mMaxNodeWidth.setValue(Integer.toString(viewWidth));
 			}
 			{
-				final Quantity<LengthUnits> width = nodeSizeModel != null ? nodeSizeModel.getMinNodeWidth() : null;
-				final Quantity<LengthUnits> viewWidth = styleController.getMinWidth(node);
-				mSetMinNodeWidth.setValue(width != null);
-				mMinNodeWidth.setQuantifiedValue(viewWidth);
+				final int width = nodeSizeModel != null ? nodeSizeModel.getMinNodeWidth() : NodeSizeModel.NOT_SET;
+				final int viewWidth = styleController.getMinWidth(node);
+				mSetMinNodeWidth.setValue(width != NodeSizeModel.NOT_SET);
+				mMinNodeWidth.setValue(Integer.toString(viewWidth));
 			}
 			final EdgeController edgeController = EdgeController.getController();
 			final EdgeModel edgeModel = EdgeModel.getModel(node);

@@ -108,7 +108,7 @@ public class ZoomableLabel extends JLabel {
 		boolean isLong = false;
 		final ModeController modeController = map.getModeController();
 		final NodeStyleController nsc = NodeStyleController.getController(modeController);
-		final int maxNodeWidth = nsc.getMaxWidth(node.getModel()).toBaseUnitsRounded();
+		final int maxNodeWidth = nsc.getMaxWidth(node.getModel());
 		if (!isHtml) {
 			final String[] lines = nodeText.split("\n");
 			for (int line = 0; line < lines.length; line++) {

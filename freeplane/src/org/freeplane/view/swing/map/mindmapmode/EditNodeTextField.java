@@ -660,7 +660,7 @@ public class EditNodeTextField extends EditNodeBase {
 		if(! mapView.isValid())
 			mapView.validate();
 		final NodeStyleController nsc = NodeStyleController.getController(modeController);
-		maxWidth = nsc.getMaxWidth(node).toBaseUnitsRounded();
+		maxWidth = nsc.getMaxWidth(node);
 		final Icon icon = parent.getIcon();
 		if(icon != null){
 			maxWidth -= icon.getIconWidth();

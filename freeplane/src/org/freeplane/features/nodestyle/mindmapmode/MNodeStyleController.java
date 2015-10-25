@@ -24,7 +24,6 @@ import java.awt.event.ActionEvent;
 import java.util.Collection;
 import org.freeplane.core.ui.AMultipleNodeAction;
 import org.freeplane.core.undo.IActor;
-import org.freeplane.core.util.Quantity;
 import org.freeplane.features.map.IExtensionCopier;
 import org.freeplane.features.map.MapController;
 import org.freeplane.features.map.NodeModel;
@@ -33,7 +32,6 @@ import org.freeplane.features.mode.ModeController;
 import org.freeplane.features.nodestyle.NodeSizeModel;
 import org.freeplane.features.nodestyle.NodeStyleController;
 import org.freeplane.features.nodestyle.NodeStyleModel;
-import org.freeplane.features.nodestyle.NodeSizeModel.LengthUnits;
 import org.freeplane.features.nodestyle.NodeStyleModel.TextAlign;
 import org.freeplane.features.styles.LogicalStyleKeys;
 
@@ -92,11 +90,11 @@ public class MNodeStyleController extends NodeStyleController {
 			if (fromData == null) {
 				return;
 			}
-			if (null != whichData.getMaxNodeWidth()) {
-				fromData.setMaxNodeWidth(null);
+			if (NodeSizeModel.NOT_SET != whichData.getMaxNodeWidth()) {
+				fromData.setMaxNodeWidth(NodeSizeModel.NOT_SET);
 			}
-			if (null != whichData.getMinNodeWidth()) {
-				fromData.setMinNodeWidth(null);
+			if (NodeSizeModel.NOT_SET != whichData.getMinNodeWidth()) {
+				fromData.setMinNodeWidth(NodeSizeModel.NOT_SET);
 			}
         }
 
@@ -206,6 +204,7 @@ public class MNodeStyleController extends NodeStyleController {
 		modeController.addAction(new NodeBackgroundColorAction());
 		modeController.addAction(new NodeShapeAction(NodeStyleModel.STYLE_FORK));
 		modeController.addAction(new NodeShapeAction(NodeStyleModel.STYLE_BUBBLE));
+		modeController.addAction(new NodeWidthAction());
 	}
 
 	public void copyStyle(final NodeModel source, final NodeModel target) {
@@ -557,9 +556,9 @@ public class MNodeStyleController extends NodeStyleController {
 		};
 		modeController.execute(actor, node.getMap());
 	}
-	public void setMinNodeWidth(final NodeModel node, final Quantity<LengthUnits> minNodeWidth) {
+	public void setMinNodeWidth(final NodeModel node, final int minNodeWidth) {
 	    final NodeSizeModel sizeModel = createOwnSizeModel(node);
-		final Quantity<LengthUnits> oldValue = NodeSizeModel.getMinNodeWidth(node);
+		final int oldValue = NodeSizeModel.getMinNodeWidth(node);
 		final IActor actor = new IActor() {
 			public void act() {
 				sizeModel.setMinNodeWidth(minNodeWidth);
@@ -578,15 +577,15 @@ public class MNodeStyleController extends NodeStyleController {
 			}
 		};
 		getModeController().execute(actor, node.getMap());
-		final Quantity<LengthUnits> maxNodeWidth = getMaxWidth(node);
-		if(maxNodeWidth != null && minNodeWidth != null && maxNodeWidth.toBaseUnitsRounded() < minNodeWidth.toBaseUnitsRounded()){
+		final int maxWidth = getMaxWidth(node);
+		if(maxWidth < minNodeWidth){
 			setMaxNodeWidth(node, minNodeWidth);
 		}
     }
 
-	public void setMaxNodeWidth(final NodeModel node, final Quantity<LengthUnits> maxNodeWidth) {
+	public void setMaxNodeWidth(final NodeModel node, final int maxNodeWidth) {
 	    final NodeSizeModel sizeModel = createOwnSizeModel(node);
-		final Quantity<LengthUnits> oldValue = NodeSizeModel.getNodeMaxNodeWidth(node);
+		final int oldValue = NodeSizeModel.getNodeMaxNodeWidth(node);
 		final IActor actor = new IActor() {
 			public void act() {
 				sizeModel.setMaxNodeWidth(maxNodeWidth);
@@ -605,8 +604,8 @@ public class MNodeStyleController extends NodeStyleController {
 			}
 		};
 		getModeController().execute(actor, node.getMap());
-		final Quantity<LengthUnits> minNodeWidth = getMinWidth(node);
-		if(maxNodeWidth != null && minNodeWidth != null && maxNodeWidth.toBaseUnitsRounded() < minNodeWidth.toBaseUnitsRounded()){
+		final int minNodeWidth = getMinWidth(node);
+		if(maxNodeWidth < minNodeWidth){
 			setMinNodeWidth(node, maxNodeWidth);
 		}
     }

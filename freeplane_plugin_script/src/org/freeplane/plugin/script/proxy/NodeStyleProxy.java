@@ -9,9 +9,7 @@ import java.util.Set;
 
 import org.freeplane.core.resources.NamedObject;
 import org.freeplane.core.util.ColorUtils;
-import org.freeplane.core.util.Quantity;
 import org.freeplane.features.map.NodeModel;
-import org.freeplane.features.nodestyle.NodeSizeModel.LengthUnits;
 import org.freeplane.features.nodestyle.NodeStyleController;
 import org.freeplane.features.nodestyle.NodeStyleModel;
 import org.freeplane.features.nodestyle.mindmapmode.MNodeStyleController;
@@ -78,20 +76,12 @@ class NodeStyleProxy extends AbstractProxy<NodeModel> implements Proxy.NodeStyle
     }
 
     public int getMinNodeWidth() {
-        return getMinNodeWidthQuantity().toBaseUnitsRounded();
+        return getStyleController().getMinWidth(getDelegate());
     }
-
-	public Quantity<LengthUnits> getMinNodeWidthQuantity() {
-		return getStyleController().getMinWidth(getDelegate());
-	}
 
     public int getMaxNodeWidth() {
-        return getMaxNodeWidthQuantity().toBaseUnitsRounded();
+        return getStyleController().getMaxWidth(getDelegate());
     }
-
-	public Quantity<LengthUnits> getMaxNodeWidthQuantity() {
-		return getStyleController().getMaxWidth(getDelegate());
-	}
 
 	private MLogicalStyleController getLogicalStyleController() {
 		return (MLogicalStyleController) LogicalStyleController.getController();
@@ -176,27 +166,12 @@ class NodeStyleProxy extends AbstractProxy<NodeModel> implements Proxy.NodeStyle
     }
 
     public void setMinNodeWidth(int width) {
-        Quantity<LengthUnits> quantity = inPixels(width);
-		setMinNodeWidth(quantity);
+        getStyleController().setMinNodeWidth(getDelegate(), width);
     }
-
-	public Quantity<LengthUnits> inPixels(int width) {
-		Quantity<LengthUnits> quantity = width != -1 ? new Quantity<LengthUnits>(width, LengthUnits.px) : null;
-		return quantity;
-	}
-
-	public void setMinNodeWidth(Quantity<LengthUnits> quantity) {
-		getStyleController().setMinNodeWidth(getDelegate(), quantity);
-	}
 
     public void setMaxNodeWidth(int width) {
-        Quantity<LengthUnits> quantity = inPixels(width);
-		setMaxNodeWidth(quantity);
+        getStyleController().setMaxNodeWidth(getDelegate(), width);
     }
-
-	public void setMaxNodeWidth(Quantity<LengthUnits> quantity) {
-		getStyleController().setMaxNodeWidth(getDelegate(), quantity);
-	}
 
     public boolean isNumberingEnabled() {
         return NodeStyleModel.getNodeNumbering(getDelegate());
