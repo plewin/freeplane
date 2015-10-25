@@ -33,12 +33,9 @@ import java.util.Properties;
 import java.util.ResourceBundle;
 import java.util.Vector;
 
-import org.freeplane.core.resources.components.QuantityProperty;
 import org.freeplane.core.ui.AFreeplaneAction;
-import org.freeplane.core.ui.LengthUnits;
 import org.freeplane.core.util.FileUtils;
 import org.freeplane.core.util.LogUtils;
-import org.freeplane.core.util.Quantity;
 import org.freeplane.features.mode.AController.IActionOnChange;
 import org.freeplane.features.mode.Controller;
 
@@ -153,11 +150,6 @@ public abstract class ResourceController {
 		}
 	}
 
-
-	public int getLengthProperty(String name) {
-		final String property = getProperty(name);
-		return Quantity.fromString(property, LengthUnits.px).toBaseUnitsRounded();
-	}
 
 	public int getIntProperty(String key) {
 		return Integer.parseInt(getProperty(key));
