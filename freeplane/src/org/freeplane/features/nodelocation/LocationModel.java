@@ -50,7 +50,6 @@ public class LocationModel implements IExtension {
 		}
 	};
 	public final static int VGAP = 3;
-	public static final int GAP_NOT_SET = -1;
 
 	public static LocationModel createLocationModel(final NodeModel node) {
 		LocationModel location = (LocationModel) node.getExtension(LocationModel.class);
@@ -68,7 +67,7 @@ public class LocationModel implements IExtension {
 
 	private int hGap = LocationModel.HGAP;
 	private int shiftY = 0;
-	private int vGap = LocationModel.GAP_NOT_SET;
+	private int vGap = LocationModel.VGAP;
 
 	public int getHGap() {
 		return hGap;
@@ -91,6 +90,6 @@ public class LocationModel implements IExtension {
 	}
 
 	public void setVGap(final int gap) {
-		vGap = gap >= 0 ? gap : GAP_NOT_SET;
+		vGap = Math.max(gap, 0);
 	}
 }
