@@ -746,11 +746,7 @@ public class NodeList {
 		});
 		rowSM.addListSelectionListener(new ListSelectionListener() {
 			String getNodeText(final NodeModel node) {
-				final String nodeText = TextController.getController().getShortText(node);
-				if (node.isRoot())
-					return nodeText;
-				else
-					return getNodeText(node.getParentNode()) + " -> " + nodeText;
+				return TextController.getController().getShortText(node) + ((node.isRoot()) ? "" : (" <- " + getNodeText(node.getParentNode())));
 			}
 
 			public void valueChanged(final ListSelectionEvent e) {
