@@ -32,7 +32,6 @@ import org.freeplane.core.io.IExtensionElementWriter;
 import org.freeplane.core.io.ITreeWriter;
 import org.freeplane.core.io.ReadManager;
 import org.freeplane.core.io.WriteManager;
-import org.freeplane.core.ui.LengthUnits;
 import org.freeplane.core.util.ColorUtils;
 import org.freeplane.core.util.FreeplaneVersion;
 import org.freeplane.core.util.LogUtils;
@@ -40,6 +39,7 @@ import org.freeplane.core.util.Quantity;
 import org.freeplane.features.map.MapWriter;
 import org.freeplane.features.map.NodeBuilder;
 import org.freeplane.features.map.NodeModel;
+import org.freeplane.features.nodestyle.NodeSizeModel.LengthUnits;
 import org.freeplane.features.nodestyle.NodeStyleModel.TextAlign;
 import org.freeplane.n3.nanoxml.XMLElement;
 
