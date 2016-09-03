@@ -434,11 +434,12 @@ public class LinkController extends SelectionController implements IExtension {
 	 */
 	public Component getPopupForModel(final java.lang.Object obj) {
 		if (obj instanceof ConnectorModel) {
-			final ConnectorModel link = (ConnectorModel) obj;
-			final Box arrowLinkPopup = Box.createVerticalBox();
-			arrowLinkPopup.setName(TextUtils.getText("connector"));
-			createArrowLinkPopup(link, arrowLinkPopup);
-			return arrowLinkPopup;
+			return new JLabel("test");
+//			final ConnectorModel link = (ConnectorModel) obj;
+//			final Box arrowLinkPopup = Box.createVerticalBox();
+//			arrowLinkPopup.setName(TextUtils.getText("connector"));
+//			createArrowLinkPopup(link, arrowLinkPopup);
+//			return arrowLinkPopup;
 		}
 		return null;
 	}
